@@ -1,0 +1,6 @@
+{
+  "name": "B-Day Wish",
+  "description": "A beautifully designed birthday greeting website with an interactive landing page, smooth animations, white confetti effect, and fluid image carousel slider.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
