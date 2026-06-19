@@ -2,24 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PartyPopper, Home } from 'lucide-react';
 
+
 // Curation of 16 gorgeous, high-contrast, premium resolution celebration images for the carousel
 const CAROUSEL_IMAGES = [
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80', // Floating warm balloons and celebration lights
-  'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80', // Elegant luxury wrapped gift with light bokeh
-  'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800&auto=format&fit=crop&q=80', // Beautiful single lit candle celebration cake
-  'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80', // Magic golden celebration light sparks
-  'https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=800&auto=format&fit=crop&q=80', // Sparkling celebratory festive warm bokeh
-  'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&auto=format&fit=crop&q=80', // Elegant toast of golden bubbly glasses
-  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&auto=format&fit=crop&q=80', // Intimate glowing close-up sparkler burst
-  'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&auto=format&fit=crop&q=80', // Immersive colorful party dance light environment
-  'https://images.unsplash.com/photo-1481162854517-d9e353af153d?w=800&auto=format&fit=crop&q=80', // Cozy warm fairy lights trail draping
-  'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800&auto=format&fit=crop&q=80', // Heartwarming luxury wrapped red envelope boxes
-  'https://images.unsplash.com/photo-1507504038482-7621137c64c2?w=800&auto=format&fit=crop&q=80', // Bursting dazzling festive night fireworks sky
-  'https://images.unsplash.com/photo-1517263904838-7fa9f4322e39?w=800&auto=format&fit=crop&q=80', // Whimsical pastel birthday party cupcakes set
-  'https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=800&auto=format&fit=crop&q=80', // Bright shiny sun-kissed magical flares bokeh
-  'https://images.unsplash.com/photo-1521480392969-a86b3cc762df?w=800&auto=format&fit=crop&q=80', // Festive glasses raised under warm hanging bulbs
-  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop&q=80', // Brilliant golden party confetti burst explosion
-  'https://images.unsplash.com/photo-1496843916099-a9905216b66f?w=800&auto=format&fit=crop&q=80', // Atmospheric ambient sparks and celebration joy
+  '/assets/images/photo1.jpg',
+  '/assets/images/photo2.jpg',
+  '/assets/images/photo3.jpg',
+  '/assets/images/photo4.jpg',
+  '/assets/images/photo5.jpg',
+  '/assets/images/photo6.jpg',
+  '/assets/images/photo7.jpg',
+  '/assets/images/photo8.jpg',
+  '/assets/images/photo9.jpg',
+  '/assets/images/photo10.jpg',
+  '/assets/images/photo11.jpg',
+  '/assets/images/photo12.jpg',
+  '/assets/images/photo13.jpg',
+  '/assets/images/photo14.jpg',
+  '/assets/images/photo15.jpg',
 ];
 
 interface ConfettiParticle {
@@ -220,6 +220,7 @@ export default function App() {
   const [page, setPage] = useState<'landing' | 'main'>('landing');
   const [confettiTrigger, setConfettiTrigger] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Auto-playing image carousel transitions: cycles through all 16 images every 5 seconds one by one
   useEffect(() => {
@@ -373,7 +374,7 @@ export default function App() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ duration: 0.8, ease: 'easeInOut' }}
-                          className="absolute inset-0 w-full h-full object-cover select-none"
+                          className="absolute inset-0 w-full h-full object-cover object-center select-none"
                           referrerPolicy="no-referrer"
                           id={`carousel-image-${currentSlide}`}
                         />
@@ -392,5 +393,6 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+    
   );
 }
