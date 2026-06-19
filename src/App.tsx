@@ -5,21 +5,21 @@ import { PartyPopper, Home } from 'lucide-react';
 
 // Curation of 16 gorgeous, high-contrast, premium resolution celebration images for the carousel
 const CAROUSEL_IMAGES = [
-  '/assets/images/photo1.jpg',
-  '/assets/images/photo2.jpg',
-  '/assets/images/photo3.jpg',
-  '/assets/images/photo4.jpg',
-  '/assets/images/photo5.jpg',
-  '/assets/images/photo6.jpg',
-  '/assets/images/photo7.jpg',
-  '/assets/images/photo8.jpg',
-  '/assets/images/photo9.jpg',
-  '/assets/images/photo10.jpg',
-  '/assets/images/photo11.jpg',
-  '/assets/images/photo12.jpg',
-  '/assets/images/photo13.jpg',
-  '/assets/images/photo14.jpg',
-  '/assets/images/photo15.jpg',
+  '/images/photo1.jpg',
+  '/images/photo2.jpg',
+  '/images/photo3.jpg',
+  '/images/photo4.jpg',
+  '/images/photo5.jpg',
+  '/images/photo6.jpg',
+  '/images/photo7.jpg',
+  '/images/photo8.jpg',
+  '/images/photo9.jpg',
+  '/images/photo10.jpg',
+  '/images/photo11.jpg',
+  '/images/photo12.jpg',
+  '/images/photo13.jpg',
+  '/images/photo14.jpg',
+  '/images/photo15.jpg',
 ];
 
 interface ConfettiParticle {
