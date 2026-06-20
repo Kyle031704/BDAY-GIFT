@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PartyPopper, Home } from 'lucide-react';
+import { PartyPopper, Home, Sparkles } from 'lucide-react';
 
 
 // Curation of 16 gorgeous, high-contrast, premium resolution celebration images for the carousel
@@ -216,12 +216,207 @@ function HorizontalFilmStrip({ direction = 'left' }: { direction?: 'left' | 'rig
   );
 }
 
+// Pyro-style fireworks canvas component
+function Fireworks({ trigger }: { trigger: number }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const particlesRef = useRef<any[]>([]);
+  const rocketsRef = useRef<any[]>([]);
+  const idCounter = useRef(0);
+
+  useEffect(() => {
+    if (trigger === 0) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const colors = [
+      '#ffffff', '#a8c8ff', '#d6e3ff', '#67e8f9'
+    ];
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Create a rocket that will launch and explode
+    const launchRocket = () => {
+      idCounter.current++;
+      rocketsRef.current.push({
+        id: idCounter.current,
+        x: w * 0.2 + Math.random() * w * 0.6,
+        y: h,
+        targetY: h * 0.15 + Math.random() * h * 0.35,
+        speed: 18 + Math.random() * 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        trail: [],
+      });
+    };
+
+    // Launch multiple rockets with delays
+    const rocketCount = 8 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < rocketCount; i++) {
+      setTimeout(() => launchRocket(), i * 80 + Math.random() * 100);
+    }
+
+    // Explode rocket into particles
+    const explode = (x: number, y: number, color: string) => {
+      const particleCount = 60 + Math.floor(Math.random() * 40);
+      for (let i = 0; i < particleCount; i++) {
+        idCounter.current++;
+        const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.3;
+        const speed = 2 + Math.random() * 5;
+        particlesRef.current.push({
+          id: idCounter.current,
+          x, y,
+          size: Math.random() * 3 + 1.5,
+          color,
+          speedX: Math.cos(angle) * speed,
+          speedY: Math.sin(angle) * speed,
+          opacity: 1,
+          decay: 0.02 + Math.random() * 0.015,
+          gravity: 0.15,
+        });
+      }
+    };
+
+    let animFrame: number;
+
+    const tick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update rockets
+      for (let i = rocketsRef.current.length - 1; i >= 0; i--) {
+        const r = rocketsRef.current[i];
+        r.trail.push({ x: r.x, y: r.y });
+        if (r.trail.length > 8) r.trail.shift();
+
+        // Draw trail
+        for (let j = 0; j < r.trail.length; j++) {
+          const t = r.trail[j];
+          ctx.globalAlpha = (j / r.trail.length) * 0.6;
+          ctx.fillStyle = r.color;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        r.y -= r.speed;
+        r.speed *= 0.98;
+
+        // Draw rocket head
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Explode when reaching target or slowing down
+        if (r.y <= r.targetY || r.speed < 4) {
+          explode(r.x, r.y, r.color);
+          rocketsRef.current.splice(i, 1);
+        }
+      }
+
+      // Update particles
+      for (let i = particlesRef.current.length - 1; i >= 0; i--) {
+        const p = particlesRef.current[i];
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.speedY += p.gravity;
+        p.speedX *= 0.98;
+        p.speedY *= 0.98;
+        p.opacity -= p.decay;
+
+        if (p.opacity <= 0) {
+          particlesRef.current.splice(i, 1);
+          continue;
+        }
+
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add sparkle glow
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      ctx.globalAlpha = 1;
+
+      if (rocketsRef.current.length > 0 || particlesRef.current.length > 0) {
+        animFrame = requestAnimationFrame(tick);
+      }
+    };
+
+    animFrame = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animFrame);
+    };
+  }, [trigger]);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50 w-full h-full" />;
+}
+// Beautiful smooth twinkling stars background component
+function TwinklingStars() {
+  // Locks the positions so they never jump or change places
+  const stars = useMemo(() => Array.from({ length: 80 }, (_, i) => ({
+    id: i,
+    size: Math.random() * 3 + 2, 
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    duration: Math.random() * 4 + 4, // Slow, smooth twinkle (4 to 8 seconds)
+    delay: Math.random() * 5,
+  })), []);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      {stars.map((star) => (
+        <motion.div
+          key={star.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            left: `${star.left}%`,
+            top: `${star.top}%`,
+            boxShadow: '0 0 8px #a8c8ff, 0 0 16px #a8c8ff',
+          }}
+          animate={{
+            opacity: [0.1, 1, 0.1], // Fades in and out smoothly
+            scale: [0.8, 1.2, 0.8], // Grows and shrinks slightly
+          }}
+          transition={{
+            duration: star.duration,
+            repeat: Infinity,
+            delay: star.delay,
+            ease: 'easeInOut', // Makes the twinkle feel very natural
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function App() {
   const [page, setPage] = useState<'landing' | 'main'>('landing');
   const [confettiTrigger, setConfettiTrigger] = useState(0);
+  const [fireworksTrigger, setFireworksTrigger] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [showFlash, setShowFlash] = useState(false);
 
   // Auto-playing image carousel transitions: cycles through all 16 images every 5 seconds one by one
   useEffect(() => {
@@ -242,16 +437,23 @@ export default function App() {
   }, []);
 
   const handleLandingClick = () => {
-        // Play audio on click
-    if (audioRef.current) {
-      audioRef.current.play();
-    }
-    // Burst magnificent white confetti immediately from sides and middle
-    setConfettiTrigger((t) => t + 1);
-    
-    // Transition smoothly to main celebration card
+  if (audioRef.current) {
+    audioRef.current.currentTime = 0; // Ensure it starts from the very beginning
+    audioRef.current.play();
+  }
+  
+  setShowFlash(true);
+  setConfettiTrigger((t) => t + 1);
+  setFireworksTrigger((t) => t + 1);
+  
+  setTimeout(() => {
     setPage('main');
-  };
+  }, 50);
+  
+  setTimeout(() => {
+    setShowFlash(false);
+  }, 500);
+};
 
   const triggerConfettiPulse = (e?: React.MouseEvent) => {
     if (e) {
@@ -265,6 +467,7 @@ export default function App() {
       
       {/* Beautiful white and azure confetti canvas overlay */}
       <CanvasConfetti trigger={confettiTrigger} />
+      <Fireworks trigger={fireworksTrigger} />
 
       <AnimatePresence mode="wait">
         {page === 'landing' ? (
@@ -274,7 +477,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
             onClick={handleLandingClick}
             className="flex-grow w-full flex flex-col items-center justify-center cursor-pointer select-none relative h-screen bg-surface"
             id="landing-container"
@@ -293,7 +496,7 @@ export default function App() {
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }}
-                className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tighter leading-none select-none pb-4 text-sweep-glow"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tighter leading-none select-none pb-4 text-sweep-glow"
                 id="landing-greeting"
               >
                 Click anywhere :b
@@ -314,6 +517,7 @@ export default function App() {
             className="flex-grow flex flex-col justify-between w-full relative min-h-screen pb-11 sm:pb-20 md:pb-28 pt-11 sm:pt-20 md:pt-28 overflow-hidden"
             id="main-celebration-container"
           >
+            <TwinklingStars /> 
             {/* Aesthetic Horizontally Scrolling Movie Film Strips (Top and Bottom) */}
             <div className="absolute top-1 left-0 right-0 w-full pointer-events-none z-0" id="horizontal-film-strip-top">
               <HorizontalFilmStrip direction="left" />
@@ -325,7 +529,13 @@ export default function App() {
             {/* Elegant floating square Back to Home button in top-left corner */}
             <div className="fixed top-3 left-4 z-40" id="global-nav">
               <button
-                onClick={() => setPage('landing')}
+                onClick={() => {
+                  if (audioRef.current) {
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
+                  }
+                  setPage('landing');
+                }}
                 className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
                 title="Back to Home"
                 id="global-home-button"
@@ -336,6 +546,14 @@ export default function App() {
 
             {/* Elegant floating square confetti pop button in top-right corner to prevent layout overlay */}
             <div className="fixed top-3 right-4 z-40" id="global-header">
+              <button
+                onClick={() => setFireworksTrigger((t) => t + 1)}
+                className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
+                title="Launch Fireworks!"
+              >
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+
               <button
                 onClick={triggerConfettiPulse}
                 className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
@@ -353,12 +571,15 @@ export default function App() {
                 {/* Left Column: Glowing Text Birthday Wishes with enlarged premium presentation */}
                 <div className="flex flex-col space-y-2 sm:space-y-4 text-left order-1 md:order-1 mt-1 sm:mt-2 md:mt-0" id="left-greeting-column">
                   
-                  <h1 className="font-display-lg text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] text-sweep-glow" id="celebration-heading">
-                    Happy<br />Birthday!
+                  <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[1.05] text-sweep-glow" style={{ fontFamily: "'Great Vibes', cursive" }} id="celebration-heading">
+                    Happy 22nd<br />Birthday, Lou!
                   </h1>
 
-                  <p className="font-body-md text-on-surface-variant leading-relaxed max-w-md md:max-w-xl text-sm sm:text-lg md:text-lg lg:text-xl opacity-90" id="celebration-paragraph">
-                    Wishing you a day filled with happiness, laughter, and wonderful memories. May all your wishes come true and each hour be filled with warmth!
+                  <p 
+                    className="font-body-md text-on-surface-variant leading-relaxed max-w-md md:max-w-xl text-sm sm:text-lg md:text-lg lg:text-xl opacity-90 message-font"
+                    id="celebration-paragraph"
+                  >
+                    On your special day, we are reminded of how much your kindness and positivity mean to us. We hope you continue to walk through life with the same grace and brightness you show every day. Please never forget to smile—it is a reflection of the wonderful person you are. Ingatan at samahan nawa palagi ng Panginoon.
                   </p>
                 </div>
 
@@ -402,6 +623,19 @@ export default function App() {
             </main>
 
           </motion.div>
+        )}
+      </AnimatePresence>
+            {/* Flash effect overlay */}
+            {/* Flash effect overlay */}
+      <AnimatePresence>
+        {showFlash && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="fixed inset-0 bg-gradient-to-br from-white via-[#a8c8ff] to-white pointer-events-none z-[100]"
+          />
         )}
       </AnimatePresence>
     </div>
