@@ -216,6 +216,7 @@ function HorizontalFilmStrip({ direction = 'left' }: { direction?: 'left' | 'rig
   );
 }
 
+
 export default function App() {
   const [page, setPage] = useState<'landing' | 'main'>('landing');
   const [confettiTrigger, setConfettiTrigger] = useState(0);
@@ -233,7 +234,18 @@ export default function App() {
     return () => clearInterval(interval);
   }, [page]);
 
+  // Initialize audio
+  useEffect(() => {
+    audioRef.current = new Audio('/song.mp3');
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.5;
+  }, []);
+
   const handleLandingClick = () => {
+        // Play audio on click
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
     // Burst magnificent white confetti immediately from sides and middle
     setConfettiTrigger((t) => t + 1);
     
