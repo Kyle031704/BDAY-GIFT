@@ -129,3 +129,17 @@
 .message-font {
   font-family: 'Playfair Display', serif;
 }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background-color: white;
+  box-shadow: 0 0 8px #a8c8ff, 0 0 16px #a8c8ff;
+  animation: twinkle var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}

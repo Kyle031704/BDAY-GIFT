@@ -369,41 +369,32 @@ function Fireworks({ trigger }: { trigger: number }) {
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50 w-full h-full" />;
 }
-// Beautiful smooth twinkling stars background component
+// Optimized smooth twinkling stars background component using CSS
 function TwinklingStars() {
-  // Locks the positions so they never jump or change places
-  const stars = useMemo(() => Array.from({ length: 80 }, (_, i) => ({
+  // 300 stars is enough to look completely full, but runs smoothly with CSS
+  const stars = useMemo(() => Array.from({ length: 300 }, (_, i) => ({
     id: i,
-    size: Math.random() * 3 + 2, 
+    size: Math.random() * 3 + 1.5, 
     left: Math.random() * 100,
     top: Math.random() * 100,
-    duration: Math.random() * 4 + 4, // Slow, smooth twinkle (4 to 8 seconds)
-    delay: Math.random() * 5,
+    duration: `${Math.random() * 4 + 3}s`, 
+    delay: `${Math.random() * 5}s`,
   })), []);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
       {stars.map((star) => (
-        <motion.div
+        <div
           key={star.id}
-          className="absolute rounded-full bg-white"
+          className="star"
           style={{
             width: `${star.size}px`,
             height: `${star.size}px`,
             left: `${star.left}%`,
             top: `${star.top}%`,
-            boxShadow: '0 0 8px #a8c8ff, 0 0 16px #a8c8ff',
-          }}
-          animate={{
-            opacity: [0.1, 1, 0.1], // Fades in and out smoothly
-            scale: [0.8, 1.2, 0.8], // Grows and shrinks slightly
-          }}
-          transition={{
-            duration: star.duration,
-            repeat: Infinity,
-            delay: star.delay,
-            ease: 'easeInOut', // Makes the twinkle feel very natural
-          }}
+            '--duration': star.duration,
+            '--delay': star.delay,
+          } as React.CSSProperties}
         />
       ))}
     </div>
