@@ -537,7 +537,7 @@ export default function App() {
             </div>
 
             {/* Elegant floating square Back to Home button in top-left corner */}
-            <div className="fixed top-3 left-4 z-40 flex flex-col gap-2" id="global-nav">
+            <div className="fixed top-3 left-4 z-40" id="global-nav">
               <button
                 onClick={() => {
                   if (audioRef.current) {
@@ -553,14 +553,22 @@ export default function App() {
                 <Home className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               
-              {/* Message button - positioned under Home button */}
+            <div className="fixed top-3 left-4 z-40" id="global-nav">
               <button
-                onClick={() => setIsPopupOpen(true)}
+                onClick={() => {
+                  if (audioRef.current) {
+                  audioRef.current.pause();
+                  audioRef.current.currentTime = 0;
+                  }
+                  setPage('landing');
+                }}
                 className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
-                title="Read Message"
+                title="Back to Home"
+                id="global-home-button"
               >
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Home className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
+            </div>
             </div>
 
 
@@ -669,6 +677,7 @@ export default function App() {
       </AnimatePresence>
 
             {/* Popup Message */}
+       {/* Popup Message */}
       <AnimatePresence>
         {isPopupOpen && (
           <motion.div
@@ -687,9 +696,16 @@ export default function App() {
               className="bg-surface-container-high border border-outline-variant/30 rounded-2xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed message-font mb-5">
+              {/* Title */}
+              <h3 className="text-primary font-bold text-lg sm:text-xl mb-4 text-center tracking-wide">
+                EXPLANATION OF SONG CHOICE
+              </h3>
+              
+              {/* Message */}
+              <p className="text-white leading-relaxed text-sm sm:text-base message-font mb-5 opacity-95">
                 Wala nang no choice, joke lang. Yung 22 ni Tilor Sweep, common na, at feel ko hindi bagay sa theme. Bigla rin pumasok sa utak ko yung "Isn't She Lovely", kung di ako nagkakamali, parang ginamit na rin yan as birthday greeting, na yun mismo reason and meaning ng song. Kaso yung mismong phrase na yun, ginagamit yun ng mga tae ay tao na "express overwhelming admiration", ayaw ko naman din mamisinterpret, lalaki kasi ako, kaya dapat misterinterpret (joke lang po). Basta yun, yun naisip ko, di ko rin sure kung bagay sa theme, saka wala na talaga akong maisip na iba hehe. Again, Happy Birthday!
               </p>
+              
               <button
                 onClick={() => setIsPopupOpen(false)}
                 className="w-full py-2.5 px-4 bg-primary/20 hover:bg-primary/30 active:bg-primary/40 text-primary rounded-xl transition-colors font-medium text-sm sm:text-base"
