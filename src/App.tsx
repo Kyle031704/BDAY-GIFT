@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PartyPopper, Home, Sparkles } from 'lucide-react';
+import { PartyPopper, Home, Sparkles, MessageCircle } from 'lucide-react';
 
 
 // Curation of 16 gorgeous, high-contrast, premium resolution celebration images for the carousel
@@ -414,6 +414,9 @@ export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [showFlash, setShowFlash] = useState(false);
 
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   // State for the message glow effect
   const [msgCoords, setMsgCoords] = useState({ x: '50%', y: '50%' });
 
@@ -534,7 +537,7 @@ export default function App() {
             </div>
 
             {/* Elegant floating square Back to Home button in top-left corner */}
-            <div className="fixed top-3 left-4 z-40" id="global-nav">
+            <div className="fixed top-3 left-4 z-40 flex flex-col gap-2" id="global-nav">
               <button
                 onClick={() => {
                   if (audioRef.current) {
@@ -549,10 +552,28 @@ export default function App() {
               >
                 <Home className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
+              
+              {/* Message button - positioned under Home button */}
+              <button
+                onClick={() => setIsPopupOpen(true)}
+                className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
+                title="Read Message"
+              >
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
             </div>
 
-            {/* Elegant floating square confetti pop button in top-right corner to prevent layout overlay */}
-            <div className="fixed top-3 right-4 z-40" id="global-header">
+
+            <div className="fixed top-3 right-4 z-40 flex gap-2" id="global-header">
+                 {/* Message button */}
+              <button
+                onClick={() => setIsPopupOpen(true)}
+                className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
+                title="Read Message"
+              >
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+
               <button
                 onClick={() => setFireworksTrigger((t) => t + 1)}
                 className="hover:scale-105 active:scale-95 transition-all w-9 h-9 sm:w-11 sm:h-11 text-primary bg-secondary-container/20 hover:bg-secondary-container/40 rounded-lg sm:rounded-xl border border-primary/20 cursor-pointer flex items-center justify-center shadow-lg backdrop-blur-md"
@@ -587,7 +608,7 @@ export default function App() {
                     onMouseMove={handleMessageMove}
                     id="celebration-paragraph"
                   >
-                    On your special day, we are reminded of how much your kindness and positivity mean to us. We hope you continue to walk through life with the same grace and brightness you show every day. Please never forget to smile—it is a reflection of the wonderful person you are. Ingatan at samahan nawa palagi ng Panginoon.
+                    On your special day, we are reminded of how much your kindness and positivity mean to us. We hope you continue to walk through life with the same grace and brightness you show every day. Also, please never forget to smile—it is a reflection of the wonderful person you are. Ingatan at samahan nawa palagi ng Panginoon.
                   </p>
                 </div>
 
@@ -644,6 +665,39 @@ export default function App() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="fixed inset-0 bg-gradient-to-br from-white via-[#a8c8ff] to-white pointer-events-none z-[100]"
           />
+        )}
+      </AnimatePresence>
+
+            {/* Popup Message */}
+      <AnimatePresence>
+        {isPopupOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsPopupOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-surface-container-high border border-outline-variant/30 rounded-2xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed message-font mb-5">
+                Wala nang no choice, joke lang. Yung 22 ni Tilor Sweep, common na, at feel ko hindi bagay sa theme. Bigla rin pumasok sa utak ko yung "Isn't She Lovely", kung di ako nagkakamali, parang ginamit na rin yan as birthday greeting, na yun mismo reason and meaning ng song. Kaso yung mismong phrase na yun, ginagamit yun ng mga tae ay tao na "express overwhelming admiration", ayaw ko naman din mamisinterpret, lalaki kasi ako, kaya dapat misterinterpret (joke lang po). Basta yun, yun naisip ko, di ko rin sure kung bagay sa theme, saka wala na talaga akong maisip na iba hehe. Again, Happy Birthday!
+              </p>
+              <button
+                onClick={() => setIsPopupOpen(false)}
+                className="w-full py-2.5 px-4 bg-primary/20 hover:bg-primary/30 active:bg-primary/40 text-primary rounded-xl transition-colors font-medium text-sm sm:text-base"
+              >
+                Back
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
