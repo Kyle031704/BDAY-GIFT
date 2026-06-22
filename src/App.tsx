@@ -371,15 +371,20 @@ function Fireworks({ trigger }: { trigger: number }) {
 }
 // Optimized smooth twinkling stars background component using CSS
 function TwinklingStars() {
-  // 300 stars is enough to look completely full, but runs smoothly with CSS
-  const stars = useMemo(() => Array.from({ length: 300 }, (_, i) => ({
+  // Detect if mobile device
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // Use fewer stars on mobile (150) vs desktop (300)
+  const starCount = isMobile ? 150 : 300;
+  
+  const stars = useMemo(() => Array.from({ length: starCount }, (_, i) => ({
     id: i,
     size: Math.random() * 3 + 1.5, 
     left: Math.random() * 100,
     top: Math.random() * 100,
     duration: `${Math.random() * 4 + 3}s`, 
     delay: `${Math.random() * 5}s`,
-  })), []);
+  })), [starCount]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -408,6 +413,17 @@ export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [showFlash, setShowFlash] = useState(false);
+
+  // State for the message glow effect
+  const [msgCoords, setMsgCoords] = useState({ x: '50%', y: '50%' });
+
+  const handleMessageMove = (e: React.MouseEvent<HTMLParagraphElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMsgCoords({
+      x: `${e.clientX - rect.left}px`,
+      y: `${e.clientY - rect.top}px`,
+    });
+  };
 
   // Auto-playing image carousel transitions: cycles through all 16 images every 5 seconds one by one
   useEffect(() => {
@@ -567,7 +583,8 @@ export default function App() {
                   </h1>
 
                   <p 
-                    className="font-body-md text-on-surface-variant leading-relaxed max-w-md md:max-w-xl text-sm sm:text-lg md:text-lg lg:text-xl opacity-90 message-font"
+                    className="font-body-md text-white leading-relaxed text-sm sm:text-lg md:text-lg lg:text-xl opacity-80 message-font"
+                    onMouseMove={handleMessageMove}
                     id="celebration-paragraph"
                   >
                     On your special day, we are reminded of how much your kindness and positivity mean to us. We hope you continue to walk through life with the same grace and brightness you show every day. Please never forget to smile—it is a reflection of the wonderful person you are. Ingatan at samahan nawa palagi ng Panginoon.
