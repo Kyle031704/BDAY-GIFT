@@ -703,7 +703,7 @@ export default function App() {
               
               {/* Message */}
               <p className="text-white leading-relaxed text-sm sm:text-base message-font mb-5 opacity-95">
-                Wala nang no choice, joke lang. Yung 22 ni Tilor Sweep, common na, at feel ko hindi bagay sa theme. Bigla rin pumasok sa utak ko yung "Isn't She Lovely", kung di ako nagkakamali, parang ginamit na rin yan as birthday greeting, na yun mismo reason and meaning ng song. Kaso yung mismong phrase na yun, ginagamit yun ng mga tae ay tao na "express overwhelming admiration", ayaw ko naman din mamisinterpret, lalaki kasi ako, kaya dapat misterinterpret (joke lang po). Basta yun, yun naisip ko, di ko rin sure kung bagay sa theme, saka wala na talaga akong maisip na iba hehe. Again, Happy Birthday!
+                Wala nang no choice, joke lang. Yung 22 ni Tilor Sweep, common na, at feel ko hindi bagay sa theme. Bigla pumasok sa utak ko yung "Isn't She Lovely", kung di ako nagkakamali, ginamit yan as birthday greeting, na yun mismo reason and meaning ng song. Kaso yung mismong phrase na yun, ginagamit yun ng mga tae ay tao na "express overwhelming admiration", ayaw ko naman din mamisinterpret, lalaki kasi ako, kaya dapat misterinterpret (joke lang po). Basta yun, yun naisip ko, di ko rin sure kung bagay sa theme, saka wala na talaga akong maisip na iba hehe. Again, Happy Birthday!
               </p>
               
               <button
